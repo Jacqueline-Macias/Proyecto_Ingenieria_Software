@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS foodsoft;
+foodsoftCREATE DATABASE IF NOT EXISTS foodsoft;
 
 USE foodsoft;		
 
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS proveedor(
 
 CREATE TABLE IF NOT EXISTS platillo(
 	id_platillo INT NOT NULL,
-	nombre VARCHAR NOT NULL,
+	nombre VARCHAR(80) NOT NULL,
 	estado BOOL NOT NULL,
 	descripcion VARCHAR(100),
 	precio FLOAT NOT NULL,
