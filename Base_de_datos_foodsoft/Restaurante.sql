@@ -1,4 +1,4 @@
-foodsoftCREATE DATABASE IF NOT EXISTS foodsoft;
+CREATE DATABASE IF NOT EXISTS foodsoft;
 
 USE foodsoft;		
 
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS vcomanda(
 	id_vcomanda INT NOT NULL,
 	id_empleado INT NOT NULL,
 	mesa INT NOT NULL,
-	PRIMARY KEY(id_vcomand),
+	PRIMARY KEY(id_vcomanda),
 	FOREIGN KEY(id_empleado) REFERENCES empleado(id_empleado)
 );
 
