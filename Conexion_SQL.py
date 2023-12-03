@@ -16,27 +16,32 @@ class provider(connect_foodsoft):
             sql = "INSERT INTO proveedor(id_proveedor,nombre,telefono,correo,tipo_cadena,rfc) VALUES('{}','{}','{}','{}','{}','{}')".format(id,name,phone,email,type,rfc)
             self.cursor.execute(sql)
             self.connection.commit()
-            self.cursor.close()
+        except Exception as Ex:
+            print(Ex)
+        finally:
             self.connection.close()
-        except Exception as e:
-            raise
     
     def modifier(self,id,name,phone,email,type,rfc):
-        sql = "UPDATE proveedor SET nombre='{}',telefono='{}',correo='{}',tipo_cadena='{}',rfc='{}' WHERE id_proveedor = '{}'".format(
-            name, phone, email, type, rfc,id)
-        self.cursor.execute(sql)
-        self.connection.commit()
-        self.cursor.close()
-        self.connection.close()
+        try:
+            sql = "UPDATE proveedor SET nombre='{}',telefono='{}',correo='{}',tipo_cadena='{}',rfc='{}' WHERE id_proveedor = '{}'".format(
+                name, phone, email, type, rfc,id)
+            self.cursor.execute(sql)
+            self.connection.commit()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            self.connection.close()
     
     def select_provider(self,id):
-        sql = "SELECT * FROM proveedor WHERE id_proveedor = '{}'".format(id)
-        self.cursor.execute(sql)
-        date = self.cursor.fetchone()
-        self.cursor.close()
-        self.connection.close()
-
-        return date
+        try:
+            sql = "SELECT * FROM proveedor WHERE id_proveedor = '{}'".format(id)
+            self.cursor.execute(sql)
+            date = self.cursor.fetchone()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            self.connection.close()
+            return date
 
 
         
