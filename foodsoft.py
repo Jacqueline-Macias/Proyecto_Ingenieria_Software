@@ -27,9 +27,9 @@ class window_provider:
         def state_text(text_state):
             self.txt_id_provider.configure(state=text_state)
             self.txt_name_provider.configure(state=text_state)
-            self.txt_phone_provier.configure(state=text_state)
-            self.txt_type_provier.configure(state=text_state)
-            self.txt_rfc_provier.configure(state=text_state)
+            self.txt_phone_provider.configure(state=text_state)
+            self.txt_type_provider.configure(state=text_state)
+            self.txt_rfc_provider.configure(state=text_state)
 
         def state_btn(btn_state):
             self.btn_add.configure(state=btn_state)
@@ -71,25 +71,27 @@ class window_provider:
         self.txt_name_provider = customtkinter.CTkEntry(self.frame_provider)
         self.txt_name_provider.place(x=190, y=70)
 
-        lbl_phone_provier = customtkinter.CTkLabel(self.frame_provider, text="Telefono:")
-        lbl_phone_provier.place(x=10,y=110)
-        self.txt_phone_provier = customtkinter.CTkEntry(self.frame_provider, width=200)
-        self.txt_phone_provier.place(x=80,y=110)
+        lbl_phone_provider = customtkinter.CTkLabel(self.frame_provider, text="Telefono:")
+        lbl_phone_provider.place(x=10,y=110)
+        self.txt_phone_provider = customtkinter.CTkEntry(self.frame_provider, width=200)
+        self.txt_phone_provider.place(x=80,y=110)
 
-        lbl_email_provier = customtkinter.CTkLabel(self.frame_provider, text="Correo:")
-        lbl_email_provier.place(x=10, y=150)
-        self.txt_email_provier = customtkinter.CTkEntry(self.frame_provider,width=200)
-        self.txt_email_provier.place(x=80, y=150)
+        lbl_email_provider = customtkinter.CTkLabel(self.frame_provider, text="Correo:")
+        lbl_email_provider.place(x=10, y=150)
+        self.txt_email_provider = customtkinter.CTkEntry(self.frame_provider,width=200)
+        self.txt_email_provider.place(x=80, y=150)
 
-        lbl_type_provier = customtkinter.CTkLabel(self.frame_provider, text="Cadena:")
-        lbl_type_provier.place(x=10, y=190)
-        self.txt_type_provier = customtkinter.CTkEntry(self.frame_provider, width=200)
-        self.txt_type_provier.place(x=80, y=190)
+        lbl_type_provider = customtkinter.CTkLabel(self.frame_provider, text="Cadena:")
+        lbl_type_provider.place(x=10, y=190)
+        self.txt_type_provider = customtkinter.CTkEntry(self.frame_provider, width=200)
+        self.txt_type_provider.place(x=80, y=190)
 
-        lbl_rfc_provier = customtkinter.CTkLabel(self.frame_provider, text="RFC:")
-        lbl_rfc_provier.place(x=10, y=230)
-        self.txt_rfc_provier = customtkinter.CTkEntry(self.frame_provider, width=200)
-        self.txt_rfc_provier.place(x=80, y=230)
+        lbl_rfc_provider = customtkinter.CTkLabel(self.frame_provider, text="RFC:")
+        lbl_rfc_provider.place(x=10, y=230)
+        self.txt_rfc_provider = customtkinter.CTkEntry(self.frame_provider, width=200)
+        self.txt_rfc_provider.place(x=80, y=230)
+
+        self.btn_save_provider
 
         self.state_btn_Menu("disabled")
         state_text("disabled")
