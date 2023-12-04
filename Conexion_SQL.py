@@ -7,49 +7,40 @@ class connect_foodsoft:
                                       passwd=PassWord,
                                       port=Port,
                                       database=database_name)
-        self.cursor = self.connection.cursor()
 
 class provider(connect_foodsoft):
 
     def Add(self,id,name,phone,email,typ,rfc):
         try:
+            cursor = self.connection.cursor()
             sql = "INSERT INTO proveedor(id_proveedor,nombre,telefono,correo,tipo_cadena,rfc) VALUES('{}','{}','{}','{}','{}','{}')".format(int(id),name,phone,email,typ,rfc)
-            self.cursor.execute(sql)
+            cursor.execute(sql)
             self.connection.commit()
         except Exception as Ex:
             print(Ex)
         finally:
-            self.connection.close()
+            cursor.close()
     
     def modifier(self,id,name,phone,email,typ,rfc):
         try:
+            cursor = self.connection.cursor()
             sql = "UPDATE proveedor SET nombre='{}',telefono='{}',correo='{}',tipo_cadena='{}',rfc='{}' WHERE id_proveedor = '{}'".format(
-                name, phone, email, typ, rfc,id)
-            self.cursor.execute(sql)
+                name, phone, email, typ, rfc,int(id))
+            cursor.execute(sql)
             self.connection.commit()
         except Exception as Ex:
             print(Ex)
         finally:
-            self.connection.close()
-    
-    def select_provider(self,id):
-        try:
-            sql = "SELECT * FROM proveedor WHERE id_proveedor = '{}'".format(id)
-            self.cursor.execute(sql)
-            date = self.cursor.fetchone()
-        except Exception as Ex:
-            print(Ex)
-        finally:
-            self.connection.close()
-            return date
-    
+            cursor.close()
+
     def select_all(self):
         try:
+            cursor = self.connection.cursor()
             sql = "SELECT * FROM proveedor"
-            self.cursor.execute(sql)
-            date = self.cursor.fetchall()
+            cursor.execute(sql)
+            date = cursor.fetchall()
         except Exception as Ex:
             print(Ex)
         finally:
-            self.connection.close()
+            cursor.close()
             return date
