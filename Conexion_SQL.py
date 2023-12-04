@@ -32,6 +32,18 @@ class provider(connect_foodsoft):
             print(Ex)
         finally:
             cursor.close()
+    
+    def delete(self, id):
+        try:
+            cursor = self.connection.cursor()
+            sql = "DELETE FROM proveedor WHERE id_proveedor = '{}'".format(
+                int(id))
+            cursor.execute(sql)
+            self.connection.commit()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            cursor.close()
 
     def select_all(self):
         try:
