@@ -123,3 +123,14 @@ class supply(connect_foodsoft):
         finally:
             cursor.close()
             return date
+
+    def delete(self, name):
+        try:
+            cursor = self.connection.cursor()
+            sql = "DELETE FROM insumo WHERE nombre = '{}'".format(name)
+            cursor.execute(sql)
+            self.connection.commit()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            cursor.close()
