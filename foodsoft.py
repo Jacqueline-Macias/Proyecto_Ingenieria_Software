@@ -142,6 +142,13 @@ class window_provider:
                 btn_save_provider.configure(state='disabled')
                 btn_cancel_provider.configure(state='disabled')
 
+        def close():
+            frame_provider.destroy()
+            self.state_btn_Menu('normal')
+        
+        btn_close = customtkinter.CTkButton(frame_provider,text="X",width=10,height=10,fg_color="RED",command=close)
+        btn_close.place(x=0,y=0)
+
         btn_add = customtkinter.CTkButton(frame_provider,text="Registar",width=100,command=add)
         btn_add.place(x=70,y=10)
 
