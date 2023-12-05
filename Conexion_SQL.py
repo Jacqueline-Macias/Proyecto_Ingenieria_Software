@@ -7,6 +7,18 @@ class connect_foodsoft:
                                       passwd=PassWord,
                                       port=Port,
                                       database=database_name)
+    
+    def Search_id(self,select,table,objec,id):
+        try:
+            cursor = self.connection.cursor()
+            sql = f"SELECT {select} FROM {table} WHERE {objec} = '{id}'"
+            cursor.execute(sql)
+            date = cursor.fetchone()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            cursor.close()
+            return date
 
 class provider(connect_foodsoft):
 
@@ -76,10 +88,11 @@ class provider(connect_foodsoft):
 
 class supply(connect_foodsoft):
 
-    def Add(self, id_provider, name, min, max, price):
+    def Add(self, name_provider, name, min, max, price):
         try:
+            id = self.Search_id('id_proveedor','proveedor', 'nombre', name_provider)
             cursor = self.connection.cursor()
-            sql = "INSERT INTO insumo(nombre, stock_min, stock_max, precio, id_proveedor) VALUES('{}','{}','{}','{}','{}')".format(name,min,max,price,id_provider)
+            sql = "INSERT INTO insumo(nombre, stock_min, stock_max, precio, id_proveedor) VALUES('{}','{}','{}','{}','{}')".format(name,min,max,price,id[0])
             cursor.execute(sql)
             self.connection.commit()
         except Exception as Ex:
@@ -87,10 +100,11 @@ class supply(connect_foodsoft):
         finally:
             cursor.close()
 
-    def modifier(self,id,name,min,max,price):
+    def modifier(self,name_provider,name,min,max,price):
         try:
+            id = self.Search_id('id_proveedor','proveedor', 'nombre', name_provider)
             cursor = self.connection.cursor()
-            sql = "UPDATE insumo SET stock_min = '{}', stock_max = '{}', precio = '{}', id_proveedor = '{} WHERE nombre = '{}'".format(min,max,price,id,name)
+            sql = "UPDATE insumo SET stock_min = '{}', stock_max = '{}', precio = '{}', id_proveedor = '{}' WHERE nombre = '{}'".format(min,max,price,id[0],name)
             cursor.execute(sql)
             self.connection.commit()
         except Exception as Ex:
