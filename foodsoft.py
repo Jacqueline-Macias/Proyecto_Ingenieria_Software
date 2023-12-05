@@ -3,6 +3,7 @@ import tkinter
 from tkinter import ttk, messagebox
 
 import Conexion_SQL
+import contra
 
 class window_provider:
     def __init__(self,window):
@@ -28,8 +29,8 @@ class window_provider:
             self.frame_menu, text="Comanda", command=self.Comanda, width=80, height=50)
         self.btn_comanda.place(x=10, y=250)
 
-        self.table_provider = Conexion_SQL.provider('localhost','root','Ryck-29042001','3306','foodsoft')
-        self.table_product = Conexion_SQL.supply('localhost','root','Ryck-29042001','3306','foodsoft')
+        self.table_provider = Conexion_SQL.provider('localhost','root',contra.contraseña(),'3306','foodsoft')
+        self.table_product = Conexion_SQL.supply('localhost','root',contra.contraseña(),'3306','foodsoft')
     
     def state_btn_Menu(self,btn_state):
         self.btn_empleado.configure(state=btn_state)
