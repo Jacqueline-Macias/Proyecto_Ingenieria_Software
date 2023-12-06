@@ -32,6 +32,9 @@ class window_provider:
             self.frame_menu, text="", image=image.open_image("Image\\order.png", 50, 50), command=self.Comanda, width=80, height=50)
         self.btn_comanda.place(x=10, y=250)
 
+        self.btn_report = customtkinter.CTkButton(self.frame_menu, text="", image=image.open_image("Image\\search.png", 50, 50), command=self.report, width=80, height=50)
+        self.btn_report.place(x=10, y=310)
+
         self.table_provider = Conexion_SQL.provider('localhost','root',contra.contraseña(),'3306','foodsoft')
         self.table_product = Conexion_SQL.supply('localhost','root',contra.contraseña(),'3306','foodsoft')
         self.table_order = Conexion_SQL.order('localhost', 'root', contra.contraseña(), '3306', 'foodsoft')
@@ -42,6 +45,7 @@ class window_provider:
         self.btn_platillo.configure(state=btn_state)
         self.btn_insumo.configure(state=btn_state)
         self.btn_comanda.configure(state=btn_state)
+        self.btn_report.configure(state=btn_state)
         
     
     def Empleado(self):
@@ -687,6 +691,66 @@ class window_provider:
 
     def Comanda(self):
         pass
+
+    def report(self):
+        frame_report = customtkinter.CTkFrame(self.window, width=470, height=430)
+        frame_report.place(x=120, y=10)
+        self.state_btn_Menu('disabled')
+    
+        def add_table():
+            provider = self.table_order.view(search_id.get())
+            for count in provider:
+                name_provider = self.table_provider.Search_id('nombre','proveedor','id_proveedor',int(count[2]))
+                table.insert("", tkinter.END, text=count[1], values=[
+                            name_provider, count[3],count[4], int(count[3])*float(count[4])])
+        
+        def clear_table():
+            register = table.get_children()
+            for count_register in register:
+                table.delete(count_register)
+
+        def close():
+            self.state_btn_Menu('normal')
+            frame_report.destroy()
+        
+        def search():
+
+            if cmb_search.get() == "pedido":
+
+                table.heading('#0', text="Producto")
+                table.heading('col1', text='Proveedor')
+                table.heading('col2', text='Precio')
+                table.heading('col3', text='Cantidad')
+                table.heading('col4', text='Importe')
+
+                table.place(x=10, y=150, width=680)
+
+                clear_table()
+                add_table()
+
+
+                frame_report.update()
+
+        search_id = customtkinter.CTkEntry(frame_report,width=200)
+        search_id.place(x=10,y=40)
+        cmb_search = customtkinter.CTkOptionMenu(frame_report,values=['pedido'],width=100)
+        cmb_search.place(x=210,y=40)
+        btn_search = customtkinter.CTkButton(frame_report, width=30, height=30, text="", image=image.open_image(
+            "Image\\search.png", 30, 30), command=search)
+        btn_search.place(x=310,y=40)
+
+        btn_close = customtkinter.CTkButton(frame_report,width=10,height=10,text="X",fg_color="RED",command=close)
+        btn_close.place(x=0,y=0)
+
+        table = ttk.Treeview(frame_report, columns=('col1', 'col2', 'col3', 'col4'))
+        table.column("#0", width=10)
+        table.column("col1", width=20)
+        table.column('col2', width=15)
+        table.column('col3', width=20)
+        table.column('col4', width=20)
+
+
+        self.window.update()
 
 if __name__ == "__main__":
     window = customtkinter.CTk()
