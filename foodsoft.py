@@ -530,11 +530,17 @@ class window_provider:
         def add():
             max = self.table_order.Search_id('stock_max','insumo','nombre',txt_product.get())
             number = self.table_order.Search_id('cantidad','insumo','nombre',txt_product.get())
-            number = max[0] - (int(txt_number.get())+number[0])
+            if (txt_number.get() == ""):
+                messagebox.showerror("Error","Contidad vacia")
+            else:
+                number = max[0] - (int(txt_number.get())+number[0])
+        
             if number < 0:
                 messagebox.showerror("Error","La cantida sobrepasa al maximo")
             elif int(txt_number.get()) < 0:
                 messagebox.showerror("Error","La cantidad no puede ser negativa")
+            elif txt_number.get() == "":
+                pass
             else:
                 number_product = self.table_order.Search_id('cantidad','insumo','nombre',txt_product.get())
                 number_product = number_product[0] + int(txt_number.get())
@@ -549,15 +555,15 @@ class window_provider:
                     self.table_order.modifier(folio,txt_product.get(),new_price,new_number)
 
                 self.subtotal_order = self.subtotal_order + (int(txt_number.get()) * float(txt_price.get()))
-                lbl_subtotal = customtkinter.CTkLabel(frame_order,text=f"Subtotal: {self.subtotal_order}")
+                lbl_subtotal = customtkinter.CTkLabel(frame_order,text=f"Subtotal: {self.subtotal_order}            ")
                 lbl_subtotal.place(x=300,y=120)
 
                 self.iva_order = self.subtotal_order * 0.16
-                lbl_IVA = customtkinter.CTkLabel(frame_order,text=f"IVA: {self.iva_order}")
+                lbl_IVA = customtkinter.CTkLabel(frame_order,text=f"IVA: {self.iva_order}            ")
                 lbl_IVA.place(x=300,y=140)
 
                 self.total_order = self.subtotal_order + self.iva_order
-                lbl_total = customtkinter.CTkLabel(frame_order,text=f"Total: {self.total_order}")
+                lbl_total = customtkinter.CTkLabel(frame_order,text=f"Total: {self.total_order}          ")
                 lbl_total.place(x=300,y=180)
                 
                 clear_table()
@@ -582,15 +588,15 @@ class window_provider:
                     self.table_order.delete(folio,key)
 
                     self.subtotal_order = self.subtotal_order - float(values[3])
-                    lbl_subtotal = customtkinter.CTkLabel(frame_order,text=f"Subtotal: {self.subtotal_order}")
+                    lbl_subtotal = customtkinter.CTkLabel(frame_order,text=f"Subtotal: {self.subtotal_order}            ")
                     lbl_subtotal.place(x=300,y=120)
 
                     self.iva_order = self.subtotal_order * 0.16
-                    lbl_IVA = customtkinter.CTkLabel(frame_order,text=f"IVA: {self.iva_order}")
+                    lbl_IVA = customtkinter.CTkLabel(frame_order,text=f"IVA: {self.iva_order}              ")
                     lbl_IVA.place(x=300,y=140)
 
                     self.total_order = self.subtotal_order + self.iva_order
-                    lbl_total = customtkinter.CTkLabel(frame_order,text=f"Total: {self.total_order}")
+                    lbl_total = customtkinter.CTkLabel(frame_order,text=f"Total: {self.total_order}           ")
                     lbl_total.place(x=300,y=180)
 
                     clear_txt()
