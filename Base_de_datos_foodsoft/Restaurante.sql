@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS platillo(
 
 CREATE TABLE IF NOT EXISTS insumo(
 	nombre VARCHAR(30) NOT NULL,
+	cantidad INT NOT NULL,
 	stock_min INT NOT NULL,
 	stock_max INT NOT NULL,
 	precio FLOAT NOT NULL,
