@@ -19,6 +19,21 @@ class connect_foodsoft:
         finally:
             cursor.close()
             return date
+    
+    def Search(self,select,table,objec,id):
+        try:
+            cursor = self.connection.cursor()
+            sql = f"SELECT {select} FROM {table} WHERE {objec} = '{id}'"
+            cursor.execute(sql)
+            date = cursor.fetchall()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            cursor.close()
+            list_date = []
+            for count in date:
+                list_date.append(count[0])
+            return list_date
 
 class provider(connect_foodsoft):
 
@@ -72,7 +87,6 @@ class provider(connect_foodsoft):
                 list_date.append(count[0])
             return list_date
 
-
     def select_all(self):
         try:
             cursor = self.connection.cursor()
@@ -88,11 +102,11 @@ class provider(connect_foodsoft):
 
 class supply(connect_foodsoft):
 
-    def Add(self, name_provider, name, min, max, price):
+    def Add(self, name_provider,name,number, min, max, price):
         try:
             id = self.Search_id('id_proveedor','proveedor', 'nombre', name_provider)
             cursor = self.connection.cursor()
-            sql = "INSERT INTO insumo(nombre, stock_min, stock_max, precio, id_proveedor) VALUES('{}','{}','{}','{}','{}')".format(name,min,max,price,id[0])
+            sql = "INSERT INTO insumo(nombre,cantidad ,stock_min, stock_max, precio, id_proveedor) VALUES('{}','{}','{}','{}','{}','{}')".format(name,number,min,max,price,id[0])
             cursor.execute(sql)
             self.connection.commit()
         except Exception as Ex:
@@ -100,11 +114,11 @@ class supply(connect_foodsoft):
         finally:
             cursor.close()
 
-    def modifier(self,name_provider,name,min,max,price):
+    def modifier(self,number,name_provider,name,min,max,price):
         try:
             id = self.Search_id('id_proveedor','proveedor', 'nombre', name_provider)
             cursor = self.connection.cursor()
-            sql = "UPDATE insumo SET stock_min = '{}', stock_max = '{}', precio = '{}', id_proveedor = '{}' WHERE nombre = '{}'".format(min,max,price,id[0],name)
+            sql = "UPDATE insumo SET cantidad = '{}', stock_min = '{}', stock_max = '{}', precio = '{}', id_proveedor = '{}' WHERE nombre = '{}'".format(number,min,max,price,id[0],name)
             cursor.execute(sql)
             self.connection.commit()
         except Exception as Ex:
@@ -124,10 +138,76 @@ class supply(connect_foodsoft):
             cursor.close()
             return date
 
+    def select(self, search):
+        try:
+            cursor = self.connection.cursor()
+            sql = f"SELECT {search} FROM insumo"
+            cursor.execute(sql)
+            date = cursor.fetchall()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            cursor.close()
+            list_date = []
+            for count in date:
+                list_date.append(count[0])
+            return list_date
+
     def delete(self, name):
         try:
             cursor = self.connection.cursor()
             sql = "DELETE FROM insumo WHERE nombre = '{}'".format(name)
+            cursor.execute(sql)
+            self.connection.commit()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            cursor.close()
+
+
+class order(connect_foodsoft):
+
+    def select_all(self):
+        try:
+            cursor = self.connection.cursor()
+            sql = "SELECT * FROM icompra"
+            cursor.execute(sql)
+            date = cursor.fetchall()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            cursor.close()
+            return date
+    
+    def select_all_order(self):
+        try:
+            cursor = self.connection.cursor()
+            sql = "SELECT * FROM icomprainsumo"
+            cursor.execute(sql)
+            date = cursor.fetchall()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            cursor.close()
+            return date
+    
+    def add_order(self,provider,employee,date):
+        try:
+            id = len(self.select_all()) + 1
+            cursor = self.connection.cursor()
+            sql = "INSERT INTO icompra(id_icompra, id_proveedor, id_empleado, fecha) VALUES('{}','{}','{}','{}')".format(id,provider,employee,date)
+            cursor.execute(sql)
+            self.connection.commit()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            cursor.close()
+    
+    def add(self,id_order,product,price,cantidad):
+        try:
+            id = len(self.select_all_order()) + 1
+            cursor = self.connection.cursor()
+            sql = "INSERT INTO icomprainsumo(id_icomprainsumo, id_icompra, insumo, precio, cantidad) VALUES('{}','{}','{}','{}','{}')".format(id,id_order,product,price,cantidad)
             cursor.execute(sql)
             self.connection.commit()
         except Exception as Ex:
