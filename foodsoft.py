@@ -471,6 +471,11 @@ class window_provider:
             txt_number.delete(0,customtkinter.END)
             txt_price.delete(0,customtkinter.END)
 
+        def state_btn(btn_state):
+            btn_add.configure(state=btn_state)
+            btn_remove.configure(state=btn_state)
+            btn_order.configure(state=btn_state)
+
         def state_txt(txt_state):
             txt_price.configure(state=txt_state)
             txt_number.configure(state=txt_state)
@@ -494,6 +499,7 @@ class window_provider:
 
                     band = self.table_order.add_order(int(txt_cmb_provider.get()),self.id,date.today())
                     if band:
+                        state_btn('normal')
                         state_product('normal')
                         state_provider('disabled')
                 except Exception as Ex:
@@ -588,9 +594,13 @@ class window_provider:
 
 
         def order():
-            messagebox.showinfo("Pedido",f"El total a pagar sera de {self.total_order}")
-            frame_order.destroy()
-            self.order()
+            product = self.table_order.Search_view(folio, txt_product.get())
+            if (product != []):
+                messagebox.showinfo("Pedido",f"El total a pagar sera de {self.total_order}")
+                frame_order.destroy()
+                self.order()
+            else:
+                messagebox.showerror("Error","No se ha agregado nada al pedido")
 
         btn_close = customtkinter.CTkButton(frame_order,text="X",fg_color="RED",width=10,height=10,command=close)
         btn_close.place(x=0,y=0)
@@ -668,6 +678,7 @@ class window_provider:
 
         state_txt('disabled')
         state_product('disabled')
+        state_btn('disabled')
 
         self.window.update()
 
