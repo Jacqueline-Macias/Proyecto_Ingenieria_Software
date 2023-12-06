@@ -4,6 +4,7 @@ from tkinter import ttk, messagebox
 from datetime import date
 
 import Conexion_SQL
+import image
 import contra
 
 class window_provider:
@@ -13,22 +14,22 @@ class window_provider:
         self.frame_menu = customtkinter.CTkFrame(self.window,width=100, height=430)
         self.frame_menu.place(x=10,y=10)
 
-        self.btn_empleado = customtkinter.CTkButton(self.frame_menu,text="EM",command=self.Empleado,width=80,height=50)
+        self.btn_empleado = customtkinter.CTkButton(self.frame_menu,text="",image=image.open_image("Image\\employe.png",50,50),command=self.Empleado,width=80,height=50)
         self.btn_empleado.place(x=10,y=10)
 
-        self.btn_proveedor = customtkinter.CTkButton(self.frame_menu, text="PRO", command=self.Proveedor, width=80, height=50)
+        self.btn_proveedor = customtkinter.CTkButton(self.frame_menu, text="", image=image.open_image(
+            "Image\\local.png", 50, 50), command=self.Proveedor, width=80, height=50)
         self.btn_proveedor.place(x=10, y=70)
 
-        self.btn_platillo = customtkinter.CTkButton(
-            self.frame_menu, text="Platillo", command=self.Platillo, width=80, height=50)
+        self.btn_platillo = customtkinter.CTkButton(self.frame_menu, text="", image=image.open_image("Image\\restaurant.png", 50, 50), command=self.Platillo, width=80, height=50)
         self.btn_platillo.place(x=10, y=130)
 
         self.btn_insumo = customtkinter.CTkButton(
-            self.frame_menu, text="Insumo", command=self.Insumo, width=80, height=50)
+            self.frame_menu, text="", image=image.open_image("Image\\grocery.png", 50, 50), command=self.Insumo, width=80, height=50)
         self.btn_insumo.place(x=10, y=190)
 
         self.btn_comanda = customtkinter.CTkButton(
-            self.frame_menu, text="Comanda", command=self.Comanda, width=80, height=50)
+            self.frame_menu, text="", image=image.open_image("Image\\order.png", 50, 50), command=self.Comanda, width=80, height=50)
         self.btn_comanda.place(x=10, y=250)
 
         self.table_provider = Conexion_SQL.provider('localhost','root',contra.contraseña(),'3306','foodsoft')
@@ -609,7 +610,8 @@ class window_provider:
         lbl_provider.place(x=10,y=30)
         txt_cmb_provider =  customtkinter.CTkEntry(frame_order, width=150,height=30)
         txt_cmb_provider.place(x=100, y=30)
-        btn_search = customtkinter.CTkButton(frame_order,text="",width=30,height=30,command=search)
+        btn_search = customtkinter.CTkButton(frame_order, text="", image=image.open_image(
+            "Image\\search.png", 30, 30), width=30, height=30, command=search)
         btn_search.place(x=250,y=30)
 
         lbl_date = customtkinter.CTkLabel(frame_order, width=100,height=30,text=f"Fecha: {date.today()}")
@@ -620,7 +622,8 @@ class window_provider:
         txt_product = customtkinter.CTkOptionMenu(frame_order, width=150, height=30, fg_color="WHITE", text_color="BLACK", button_color="WHITE", values=[])
         txt_product.place(x=80, y=100)
         txt_product.set("")
-        btn_product = customtkinter.CTkButton(frame_order, text="", width=30, height=30, command=price_and_number)
+        btn_product = customtkinter.CTkButton(frame_order, text="", image=image.open_image(
+            "Image\\search.png", 30, 30), width=30, height=30, command=price_and_number)
         btn_product.place(x=230, y=100)
 
         lbl_price = customtkinter.CTkLabel(frame_order, text="Precio")
