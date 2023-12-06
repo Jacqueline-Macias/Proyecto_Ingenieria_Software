@@ -1,13 +1,15 @@
 import customtkinter
 import tkinter
 from tkinter import ttk, messagebox
+from datetime import date
 
 import Conexion_SQL
 import contra
 
 class window_provider:
-    def __init__(self,window):
+    def __init__(self,window,id):
         self.window = window
+        self.id = id
         self.frame_menu = customtkinter.CTkFrame(self.window,width=100, height=430)
         self.frame_menu.place(x=10,y=10)
 
@@ -31,6 +33,7 @@ class window_provider:
 
         self.table_provider = Conexion_SQL.provider('localhost','root',contra.contraseña(),'3306','foodsoft')
         self.table_product = Conexion_SQL.supply('localhost','root',contra.contraseña(),'3306','foodsoft')
+        self.table_order = Conexion_SQL.order('localhost', 'root', contra.contraseña(), '3306', 'foodsoft')
     
     def state_btn_Menu(self,btn_state):
         self.btn_empleado.configure(state=btn_state)
@@ -251,6 +254,7 @@ class window_provider:
             txt_stock_mi_product.configure(state=text_state)
             txt_stock_ma_product.configure(state=text_state)
             txt_precio_in_product.configure(state=text_state)
+            txt_number.configure(state=text_state)
 
         def state_btn(btn_state):
             btn_add.configure(state=btn_state)
@@ -262,7 +266,7 @@ class window_provider:
         def add_table():
             provider = self.table_product.select_all()
             for count in provider:
-                table.insert("",tkinter.END, text=count[0],values=[count[1],count[2],count[3],count[4]])
+                table.insert("",tkinter.END, text=count[0],values=[count[1],count[2],count[3],count[4],count[5]])
 
         def clear_table():
             register = table.get_children()
@@ -294,12 +298,13 @@ class window_provider:
                 state_text('normal')
                 values = table.item(select,'values')
 
-                provaider = self.table_product.Search_id('nombre','proveedor','id_proveedor',int(values[3]))
+                provider = self.table_product.Search_id('nombre','proveedor','id_proveedor',int(values[4]))
                 txt_name_product.insert(0,key)
-                txt_stock_mi_product.insert(0,values[0])
-                txt_stock_ma_product.insert(0,values[1])
-                txt_precio_in_product.insert(0,values[2])
-                txt_id_provider.set(provaider[0])
+                txt_number.insert(0,values[0])
+                txt_stock_mi_product.insert(0,values[1])
+                txt_stock_ma_product.insert(0,values[2])
+                txt_precio_in_product.insert(0,values[3])
+                txt_id_provider.set(provider[0])
 
                 state_btn('disabled')
                 btn_cancel_product.configure(state='normal')
@@ -315,12 +320,13 @@ class window_provider:
                 state_text('normal')
                 values = table.item(select, 'values')
 
-                provaider = self.table_product.Search_id('nombre', 'proveedor', 'id_proveedor', int(values[3]))
+                provider = self.table_product.Search_id('nombre', 'proveedor', 'id_proveedor', int(values[4]))
                 txt_name_product.insert(0, key)
-                txt_stock_mi_product.insert(0, values[0])
-                txt_stock_ma_product.insert(0, values[1])
-                txt_precio_in_product.insert(0, values[2])
-                txt_id_provider.set(provaider[0])
+                txt_number.insert(0,values[0])
+                txt_stock_mi_product.insert(0, values[1])
+                txt_stock_ma_product.insert(0, values[2])
+                txt_precio_in_product.insert(0, values[3])
+                txt_id_provider.set(provider[0])
 
                 option = messagebox.askquestion('Eliminar',f'¿Seguro que quiere eliminar {key} ')
                 if option == 'yes':
@@ -337,14 +343,11 @@ class window_provider:
         def merma():
             pass
 
-        def pedido():
-            pass
-
         def save():
             if self.band_modifier_product:
-                self.table_product.modifier(txt_id_provider.get(),txt_name_product.get(),txt_stock_mi_product.get(), txt_stock_ma_product.get(), txt_precio_in_product.get())
+                self.table_product.modifier(txt_number.get(),txt_id_provider.get(),txt_name_product.get(),txt_stock_mi_product.get(), txt_stock_ma_product.get(), txt_precio_in_product.get())
             else:
-                self.table_product.Add(txt_id_provider.get(),txt_name_product.get(),txt_stock_mi_product.get(), txt_stock_ma_product.get(), txt_precio_in_product.get())
+                self.table_product.Add(txt_id_provider.get(),txt_name_product.get(),txt_number.get(),txt_stock_mi_product.get(), txt_stock_ma_product.get(), txt_precio_in_product.get())
             clear_txt()
             clear_table()
             add_table()
@@ -378,7 +381,7 @@ class window_provider:
         btn_delete = customtkinter.CTkButton(frame_product, text="Eliminar", width=60, command=delete)
         btn_delete.place(x=220, y=10)
 
-        btn_pedido = customtkinter.CTkButton(frame_product, text="Pedido", width=60, command=pedido)
+        btn_pedido = customtkinter.CTkButton(frame_product, text="Pedido", width=60, command=self.order)
         btn_pedido.place(x=310, y=10)
 
         btn_merma = customtkinter.CTkButton(frame_product, text="Merma", width=60, command=merma)
@@ -411,24 +414,31 @@ class window_provider:
         txt_precio_in_product = customtkinter.CTkEntry(frame_product, width=70)
         txt_precio_in_product.place(x=80, y=150)
 
+        lbl_number= customtkinter.CTkLabel(frame_product, text="Cantidad:")
+        lbl_number.place(x=170, y=150)
+        txt_number = customtkinter.CTkEntry(frame_product, width=70)
+        txt_number.place(x=240, y=150)
+
         btn_save_product = customtkinter.CTkButton(frame_product,text="guardar",width=100,height=50,command=save)
         btn_save_product.place(x=330,y=90)
 
         btn_cancel_product = customtkinter.CTkButton(frame_product, text="cancelar", width=100, height=50, command=cancel)
         btn_cancel_product.place(x=330, y=150)
 
-        table = ttk.Treeview(frame_product,columns=('col1','col2','col3','col4'))
+        table = ttk.Treeview(frame_product,columns=('col1','col2','col3','col4','col5'))
         table.column("#0",width=10)
         table.column("col1",width=20)
         table.column('col2',width=15)
         table.column('col3',width=20)
         table.column('col4',width=15)
+        table.column('col5',width=15)
 
         table.heading('#0',text="nombre")
-        table.heading('col1',text='Stock Min')
-        table.heading('col2',text='stock Max')
-        table.heading('col3',text='Precio')
-        table.heading('col4',text='Provedor')
+        table.heading('col1',text='cantidad')
+        table.heading('col2',text='Stock Min')
+        table.heading('col3',text='stock Max')
+        table.heading('col4',text='Precio')
+        table.heading('col5',text='Provedor')
 
         table.place(x=10,y=410,width=680)
 
@@ -440,6 +450,129 @@ class window_provider:
         btn_save_product.configure(state='disabled')
 
         self.window.update()
+    
+    def order(self):
+        frame_order = customtkinter.CTkFrame(self.window, width=470, height=430)
+        frame_order.place(x=120, y=10)
+
+        def state_txt(txt_state):
+            txt_price.configure(state=txt_state)
+            txt_number.configure(state=txt_state)
+
+        def state_product(product_state):
+            txt_product.configure(state=product_state)
+            btn_product.configure(state=product_state)
+
+        def state_provider(provider_state):
+            txt_cmb_provider.configure(state=provider_state)
+            btn_search.configure(state=provider_state)
+
+        def close():
+            frame_order.destroy()
+
+        def search():
+            state_product('normal')
+            state_provider('disabled')
+
+            product = self.table_product.Search("nombre","insumo",'id_proveedor',int(txt_cmb_provider.get()))
+            txt_product.configure(values = product)
+
+            self.table_order.add_order(int(txt_cmb_provider.get()),self.id,date.today())
+
+        def price_and_number():
+            state_txt('normal')
+            price = self.table_order.Search_id('precio', 'insumo', 'nombre', txt_product.get())
+            txt_price.insert(0,price[0])
+            txt_price.configure(state="disabled")
+
+        def add():
+            price = self.table_order.Search_id('precio', 'insumo', 'nombre', txt_product.get())
+            txt_price.insert(0,price[0])
+            txt_price.configure(state="disabled")
+            #self.table_order.add(folio,txt_product.get(),float(txt_price.get()),int(txt_number.get()))
+
+        def remove():
+            pass
+
+        def order():
+            pass
+
+        btn_close = customtkinter.CTkButton(frame_order,text="X",fg_color="RED",width=10,height=10,command=close)
+        btn_close.place(x=0,y=0)
+
+        lbl_provider = customtkinter.CTkLabel(frame_order,text="ID proveedor")
+        lbl_provider.place(x=10,y=30)
+        txt_cmb_provider =  customtkinter.CTkEntry(frame_order, width=150,height=30)
+        txt_cmb_provider.place(x=100, y=30)
+        btn_search = customtkinter.CTkButton(frame_order,text="",width=30,height=30,command=search)
+        btn_search.place(x=250,y=30)
+
+        lbl_date = customtkinter.CTkLabel(frame_order, width=100,height=30,text=f"Fecha: {date.today()}")
+        lbl_date.place(x=300,y=30)
+
+        lbl_product = customtkinter.CTkLabel(frame_order,text="insumo")
+        lbl_product.place(x=10,y=100)
+        txt_product = customtkinter.CTkOptionMenu(frame_order, width=150, height=30, fg_color="WHITE", text_color="BLACK", button_color="WHITE", values=[])
+        txt_product.place(x=80, y=100)
+        txt_product.set("")
+        btn_product = customtkinter.CTkButton(frame_order, text="", width=30, height=30, command=price_and_number)
+        btn_product.place(x=230, y=100)
+
+        lbl_price = customtkinter.CTkLabel(frame_order, text="Precio")
+        lbl_price.place(x=10, y=140)
+        txt_price = customtkinter.CTkEntry(frame_order, width=50)
+        txt_price.place(x=80, y=140)
+
+        lbl_number = customtkinter.CTkLabel(frame_order, text="Cantidad")
+        lbl_number.place(x=10, y=180)
+        txt_number = customtkinter.CTkEntry(frame_order, width=50)
+        txt_number.place(x=80, y=180)
+
+        folio = len(self.table_order.select_all()) + 1
+        lbl_folio = customtkinter.CTkLabel(frame_order,text=f"Folio: {folio}")
+        lbl_folio.place(x=300,y=100)
+
+        subtotal = 0
+        lbl_subtotal = customtkinter.CTkLabel(frame_order,text=f"Subtotal: {subtotal}")
+        lbl_subtotal.place(x=300,y=120)
+
+        iva = 0
+        lbl_IVA = customtkinter.CTkLabel(frame_order,text=f"IVA: {iva}")
+        lbl_IVA.place(x=300,y=140)
+
+        lbl = customtkinter.CTkLabel(frame_order,text="------------------------")
+        lbl.place(x=300,y=160)
+
+        total = 0
+        lbl_total = customtkinter.CTkLabel(frame_order,text=f"Total: {total}")
+        lbl_total.place(x=300,y=180)
+
+        btn_add = customtkinter.CTkButton(frame_order,text="Agregar",width=60,command=add)
+        btn_add.place(x=220,y=230)
+
+        btn_remove = customtkinter.CTkButton(frame_order, text="Quitar", width=60, command=remove)
+        btn_remove.place(x=290, y=230)
+
+        btn_order = customtkinter.CTkButton(frame_order,text="Pedido",width=60, command=order)
+        btn_order.place(x=360, y=230)
+
+        table = ttk.Treeview(frame_order, columns=('col1', 'col2', 'col3'))
+        table.column("#0", width=10)
+        table.column("col1", width=20)
+        table.column('col2', width=15)
+        table.column('col3', width=20)
+
+        table.heading('#0', text="Producto")
+        table.heading('col1', text='Proveedor')
+        table.heading('col2', text='Precio')
+        table.heading('col3', text='Importe')
+
+        table.place(x=10, y=400, width=680)
+
+        state_txt('disabled')
+        state_product('disabled')
+
+        self.window.update()
 
     def Comanda(self):
         pass
@@ -449,6 +582,6 @@ if __name__ == "__main__":
     window.geometry("600x450")
     window.title("FoodSoft")
 
-    app = window_provider(window)
+    app = window_provider(window,1)
 
     window.mainloop()
