@@ -1,4 +1,5 @@
 import mysql.connector
+from tkinter import messagebox
 
 class connect_foodsoft:
     def __init__(self, Host, username, PassWord, Port, database_name):
@@ -125,6 +126,17 @@ class supply(connect_foodsoft):
             print(Ex)
         finally:
             cursor.close()
+    
+    def modifier_number(self,name,number):
+        try:
+            cursor = self.connection.cursor()
+            sql = "UPDATE insumo SET cantidad = '{}' WHERE nombre = '{}'".format(number, name)
+            cursor.execute(sql)
+            self.connection.commit()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            cursor.close()
 
     def select_all(self):
         try:
@@ -192,16 +204,20 @@ class order(connect_foodsoft):
             return date
     
     def add_order(self,provider,employee,date):
+
         try:
             id = len(self.select_all()) + 1
             cursor = self.connection.cursor()
             sql = "INSERT INTO icompra(id_icompra, id_proveedor, id_empleado, fecha) VALUES('{}','{}','{}','{}')".format(id,provider,employee,date)
             cursor.execute(sql)
             self.connection.commit()
+            band = True
         except Exception as Ex:
-            print(Ex)
+            messagebox.showerror("Error","ID ingresado invalido")
+            band = False
         finally:
             cursor.close()
+            return band
     
     def add(self,id_order,product,price,cantidad):
         try:
@@ -214,3 +230,49 @@ class order(connect_foodsoft):
             print(Ex)
         finally:
             cursor.close()
+    
+    def modifier(self,id,product,price, number):
+        try:
+            cursor = self.connection.cursor()
+            sql = "UPDATE icomprainsumo SET precio = '{}', cantidad = '{}' WHERE id_icompra = '{}' AND insumo = '{}'".format(price,number,id,product)
+            cursor.execute(sql)
+            self.connection.commit()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            cursor.close()
+    
+    def delete(self,id,nombre):
+        try:
+            curso = self.connection.cursor()
+            sql = "DELETE FROM icomprainsumo WHERE id_icompra = '{}' AND insumo = '{}'".format(id,nombre)
+            curso.execute(sql)
+            self.connection.commit()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            curso.close()
+
+    def view(self,id):
+        try:
+            cursor = self.connection.cursor()
+            sql = f'SELECT * FROM vista_icomprainsumo WHERE id_icompra = {id}'
+            cursor.execute(sql)
+            date = cursor.fetchall()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            cursor.close()
+            return date
+    
+    def Search_view(self,id,nombre):
+        try:
+            cursor = self.connection.cursor()
+            sql = "SELECT * FROM vista_icomprainsumo WHERE id_icompra = '{}' AND nombre = '{}'".format(id,nombre)
+            cursor.execute(sql)
+            date = cursor.fetchall()
+        except Exception as Ex:
+            print(Ex)
+        finally:
+            cursor.close()
+            return date
