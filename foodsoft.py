@@ -455,6 +455,22 @@ class window_provider:
         frame_order = customtkinter.CTkFrame(self.window, width=470, height=430)
         frame_order.place(x=120, y=10)
 
+        def add_table():
+            provider = self.table_order.view(folio)
+            for count in provider:
+                name_provider = self.table_provider.Search_id('nombre','proveedor','id_proveedor',int(count[2]))
+                table.insert("", tkinter.END, text=count[1], values=[
+                             name_provider, count[3],count[4], int(count[3])*float(count[4])])
+
+        def clear_table():
+            register = table.get_children()
+            for count_register in register:
+                table.delete(count_register)
+
+        def clear_txt():
+            txt_number.delete(0,customtkinter.END)
+            txt_price.delete(0,customtkinter.END)
+
         def state_txt(txt_state):
             txt_price.configure(state=txt_state)
             txt_number.configure(state=txt_state)
@@ -471,31 +487,110 @@ class window_provider:
             frame_order.destroy()
 
         def search():
-            state_product('normal')
-            state_provider('disabled')
+            if txt_cmb_provider.get() != "":
+                try:
+                    product = self.table_product.Search("nombre","insumo",'id_proveedor',int(txt_cmb_provider.get()))
+                    txt_product.configure(values = product)
 
-            product = self.table_product.Search("nombre","insumo",'id_proveedor',int(txt_cmb_provider.get()))
-            txt_product.configure(values = product)
+                    band = self.table_order.add_order(int(txt_cmb_provider.get()),self.id,date.today())
+                    if band:
+                        state_product('normal')
+                        state_provider('disabled')
+                except Exception as Ex:
+                    messagebox.showerror("Error","Dato no valido")
 
-            self.table_order.add_order(int(txt_cmb_provider.get()),self.id,date.today())
+            else:
+                messagebox.showerror("Error","Ingrese el id del proveedor")
 
         def price_and_number():
             state_txt('normal')
+            clear_txt()
             price = self.table_order.Search_id('precio', 'insumo', 'nombre', txt_product.get())
+
+            number = self.table_order.Search_id('cantidad','insumo','nombre',txt_product.get())
+            max = self.table_order.Search_id('stock_max','insumo','nombre',txt_product.get())
+
+            number = max[0] - number[0]
+
             txt_price.insert(0,price[0])
             txt_price.configure(state="disabled")
+            txt_number.insert(0,number)
 
         def add():
-            price = self.table_order.Search_id('precio', 'insumo', 'nombre', txt_product.get())
-            txt_price.insert(0,price[0])
-            txt_price.configure(state="disabled")
-            #self.table_order.add(folio,txt_product.get(),float(txt_price.get()),int(txt_number.get()))
+            max = self.table_order.Search_id('stock_max','insumo','nombre',txt_product.get())
+            number = self.table_order.Search_id('cantidad','insumo','nombre',txt_product.get())
+            number = max[0] - (int(txt_number.get())+number[0])
+            if number < 0:
+                messagebox.showerror("Error","La cantida sobrepasa al maximo")
+            elif int(txt_number.get()) < 0:
+                messagebox.showerror("Error","La cantidad no puede ser negativa")
+            else:
+                number_product = self.table_order.Search_id('cantidad','insumo','nombre',txt_product.get())
+                number_product = number_product[0] + int(txt_number.get())
+                self.table_product.modifier_number(txt_product.get(),number_product)
+                product = self.table_order.Search_view(folio, txt_product.get())
+                if (product == []):
+                    self.table_order.add(folio,txt_product.get(),float(txt_price.get()),int(txt_number.get()))
+                else:
+                    product = product[0]
+                    new_number = int(txt_number.get()) + product[4]
+                    new_price = float(txt_price.get()) + product[3]
+                    self.table_order.modifier(folio,txt_product.get(),new_price,new_number)
+
+                self.subtotal_order = self.subtotal_order + (int(txt_number.get()) * float(txt_price.get()))
+                lbl_subtotal = customtkinter.CTkLabel(frame_order,text=f"Subtotal: {self.subtotal_order}")
+                lbl_subtotal.place(x=300,y=120)
+
+                self.iva_order = self.subtotal_order * 0.16
+                lbl_IVA = customtkinter.CTkLabel(frame_order,text=f"IVA: {self.iva_order}")
+                lbl_IVA.place(x=300,y=140)
+
+                self.total_order = self.subtotal_order + self.iva_order
+                lbl_total = customtkinter.CTkLabel(frame_order,text=f"Total: {self.total_order}")
+                lbl_total.place(x=300,y=180)
+                
+                clear_table()
+                add_table()
+                state_txt('normal')
+                clear_txt()
+                state_txt("disabled")
 
         def remove():
-            pass
+            select = table.focus()
+            key = table.item(select, 'text')
+
+            if key == '':
+                messagebox.showerror("Eliminar", "Selecciona un elemento")
+            else:
+                values = table.item(select, 'values')
+                option = messagebox.askquestion('Eliminar', f'¿Seguro que quiere quitar {key}')
+                if option == 'yes':
+                    number_product = self.table_order.Search_id('cantidad','insumo','nombre',txt_product.get())
+                    number_product = number_product[0] - int(values[2])
+                    self.table_product.modifier_number(key,number_product)
+                    self.table_order.delete(folio,key)
+
+                    self.subtotal_order = self.subtotal_order - float(values[3])
+                    lbl_subtotal = customtkinter.CTkLabel(frame_order,text=f"Subtotal: {self.subtotal_order}")
+                    lbl_subtotal.place(x=300,y=120)
+
+                    self.iva_order = self.subtotal_order * 0.16
+                    lbl_IVA = customtkinter.CTkLabel(frame_order,text=f"IVA: {self.iva_order}")
+                    lbl_IVA.place(x=300,y=140)
+
+                    self.total_order = self.subtotal_order + self.iva_order
+                    lbl_total = customtkinter.CTkLabel(frame_order,text=f"Total: {self.total_order}")
+                    lbl_total.place(x=300,y=180)
+
+                    clear_txt()
+                    clear_table()
+                    add_table()
+
 
         def order():
-            pass
+            messagebox.showinfo("Pedido",f"El total a pagar sera de {self.total_order}")
+            frame_order.destroy()
+            self.order()
 
         btn_close = customtkinter.CTkButton(frame_order,text="X",fg_color="RED",width=10,height=10,command=close)
         btn_close.place(x=0,y=0)
@@ -532,19 +627,19 @@ class window_provider:
         lbl_folio = customtkinter.CTkLabel(frame_order,text=f"Folio: {folio}")
         lbl_folio.place(x=300,y=100)
 
-        subtotal = 0
-        lbl_subtotal = customtkinter.CTkLabel(frame_order,text=f"Subtotal: {subtotal}")
+        self.subtotal_order = 0
+        lbl_subtotal = customtkinter.CTkLabel(frame_order,text=f"Subtotal: {self.subtotal_order}")
         lbl_subtotal.place(x=300,y=120)
 
-        iva = 0
-        lbl_IVA = customtkinter.CTkLabel(frame_order,text=f"IVA: {iva}")
+        self.iva_order = 0
+        lbl_IVA = customtkinter.CTkLabel(frame_order,text=f"IVA: {self.iva_order}")
         lbl_IVA.place(x=300,y=140)
 
         lbl = customtkinter.CTkLabel(frame_order,text="------------------------")
         lbl.place(x=300,y=160)
 
-        total = 0
-        lbl_total = customtkinter.CTkLabel(frame_order,text=f"Total: {total}")
+        self.total_order = 0
+        lbl_total = customtkinter.CTkLabel(frame_order,text=f"Total: {self.total_order}")
         lbl_total.place(x=300,y=180)
 
         btn_add = customtkinter.CTkButton(frame_order,text="Agregar",width=60,command=add)
@@ -556,16 +651,18 @@ class window_provider:
         btn_order = customtkinter.CTkButton(frame_order,text="Pedido",width=60, command=order)
         btn_order.place(x=360, y=230)
 
-        table = ttk.Treeview(frame_order, columns=('col1', 'col2', 'col3'))
+        table = ttk.Treeview(frame_order, columns=('col1', 'col2', 'col3','col4'))
         table.column("#0", width=10)
         table.column("col1", width=20)
         table.column('col2', width=15)
         table.column('col3', width=20)
+        table.column('col4', width=20)
 
         table.heading('#0', text="Producto")
         table.heading('col1', text='Proveedor')
         table.heading('col2', text='Precio')
-        table.heading('col3', text='Importe')
+        table.heading('col3',text='Cantidad')
+        table.heading('col4', text='Importe')
 
         table.place(x=10, y=400, width=680)
 
